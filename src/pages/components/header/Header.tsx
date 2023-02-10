@@ -56,8 +56,8 @@ export const Header = () => {
         <Menu>Explore</Menu>
         <Menu>Create</Menu>
       </MenuView>
-      <IconView>
-        <WalletIcon onClick={ signIn} />
+      <IconView onClick={ signIn }>
+        <WalletIcon />
       </IconView>
     </HeaderView>
   )

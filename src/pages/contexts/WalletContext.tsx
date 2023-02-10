@@ -19,7 +19,7 @@ const jsonRpcUrl = 'https://rpc.builder0x69.io'
 export const WalletContext = createContext<IWalletContext>({
   provider: null,
   account: '',
-  signIn: () => { }
+  signIn: () => {}
 })
 
 export const WalletContextProvider = ({ children }: PropsWithChildren) => {
@@ -28,31 +28,32 @@ export const WalletContextProvider = ({ children }: PropsWithChildren) => {
   )
   const [account, setAccount] = useState('')
   const signIn = useCallback(async () => {
-    const installed: boolean = window?.ethereum ?? false
-
-    if (installed) {
-      setProvider(new BrowserProvider(window.ethereum))
-    } else {
+    const eth = window.ethereum
+    
+    if (!eth) {
       console.log('Not installed Metamask. using read-only defaults.')
+      return
     }
-    await window.ethereum
+    setProvider(new BrowserProvider(eth))
+    await eth
       .request({
         method: 'eth_requestAccounts'
       })
       .then(([account]: string[]) => {
-        setAccount(account)        
+        setAccount(account)
       })
-
-    console.log(account)
+    const signer = await provider.getSigner()
+    const signed = await signer.signMessage('xxxx')
+    
+    console.log(signed);
 
     //await axios.get(`/auth/${account}`)
-    //(await provider.getSigner()).signMessage('')
   }, [])
 
   return (
     <WalletContext.Provider
-      value={{ provider, account, signIn }}>
-      {children}
+      value={{ provider, account, signIn }} >
+      { children }
     </WalletContext.Provider>
   )
 }
